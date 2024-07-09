@@ -32,7 +32,6 @@ autoload -Uz compinit && compinit
 
 zinit cdreplay -q
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 
 # Keybindings
@@ -139,7 +138,7 @@ alias lg='~/dotfiles/scripts/looking-glass.sh'
 # -----------------------------------------------------
 alias confq='$EDITOR ~/dotfiles/qtile/config.py'
 alias confp='$EDITOR ~/dotfiles/picom/picom.conf'
-alias confb='$EDITOR ~/dotfiles/.bashrc'
+alias confb='$EDITOR ~/dotfiles/.zshrc'
 
 # -----------------------------------------------------
 # EDIT NOTES
