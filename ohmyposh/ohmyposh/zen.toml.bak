@@ -1,0 +1,64 @@
+[console]
+theme = "paradox"
+
+[segments]
+  [[segments.left]]
+  type = "time"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#00afff"
+
+  [[segments.left]]
+  type = "os"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#005f87"
+
+  [[segments.left]]
+  type = "path"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#d75f00"
+  properties.use_home_tilde = true
+
+  [[segments.left]]
+  type = "git"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#5f8700"
+  properties.branch_symbol = ""
+
+  [[segments.left]]
+  type = "node"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#d7005f"
+
+  [[segments.left]]
+  type = "python"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#8700af"
+
+  [[segments.right]]
+  type = "battery"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#005f87"
+  properties.battery_symbol = "🔋"
+
+  [[segments.right]]
+  type = "date"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#00afff"
+  properties.format = "2006-01-02"
+
