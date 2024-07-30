@@ -1,0 +1,114 @@
+schema = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+version = 2
+final_space = true
+
+[[blocks]]
+alignment = "left"
+type = "prompt"
+
+  [[blocks.segments]]
+  background = "#000000"
+  foreground = "#dd1e1e"
+  style = "plain"
+  template = " \u26a1"
+  type = "root"
+
+  [[blocks.segments]]
+  background = "#000000"
+  foreground = "#ffffff"
+  style = "plain"
+  template = " {{ if .WSL }}WSL at {{ end }}{{.Icon}} "
+  type = "os"
+
+    [blocks.segments.properties]
+    alpine = "\uf300"
+    arch = "\uf303"
+    centos = "\uf304"
+    debian = "\uf306"
+    elementary = "\uf309"
+    fedora = "\uf30a"
+    gentoo = "\uf30d"
+    linux = "\ue712"
+    macos = "\ue711"
+    manjaro = "\uf312"
+    mint = "\uf30f"
+    opensuse = "\uf314"
+    raspbian = "\uf315"
+    ubuntu = "\uf31c"
+    windows = "\ue62a"
+    wsl = "\ue712"
+
+  [[blocks.segments]]
+  background = "#272727"
+  foreground = "#43CCEA"
+  style = "plain"
+  template = " {{ .Path }} "
+  type = "path"
+
+    [blocks.segments.properties]
+    folder_icon = "\ue5fe"
+    folder_separator_icon = " <#000000>\ue0bd </>"
+    home_icon = "\ueb06"
+    style = "agnoster_short"
+
+  [[blocks.segments]]
+  background = "#272727"
+  foreground = "#00ff0d"
+  style = "plain"
+  template = "<#000000>\ue0b1 </>{{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} "
+  type = "git"
+
+    [blocks.segments.properties]
+    fetch_stash_count = true
+    fetch_status = true
+
+  [[blocks.segments]]
+  background = "#272727"
+  foreground = "#ffffff"
+  style = "diamond"
+  template = "<#000000>\ue0b1 </>{{ .FormattedMs }}s "
+  trailing_diamond = "\ue0b0"
+  type = "executiontime"
+
+    [blocks.segments.properties]
+    style = "dallas"
+    threshold = 0
+
+[[blocks]]
+alignment = "right"
+type = "prompt"
+
+  [[blocks.segments]]
+  background = "#272727"
+  foreground = "#43CCEA"
+  leading_diamond = "\ue0c5"
+  style = "diamond"
+  template = " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}<transparent> / </>{{ .HostName }}"
+  type = "session"
+
+  [[blocks.segments]]
+  background = "#272727"
+  foreground = "#43CCEA"
+  style = "diamond"
+  template = "<#000000> \ue31e\uf0fb </>{{ .CurrentDate | date .Format }} "
+  trailing_diamond = "\ue0c5"
+  type = "time"
+
+    [blocks.segments.properties]
+    time_format = "3:04:05 PM"
+
+[[blocks]]
+alignment = "left"
+newline = true
+type = "prompt"
+
+  [[blocks.segments]]
+  foreground = "#00ff0d"
+  style = "plain"
+  template = "\uf432 "
+  type = "status"
+
+    [blocks.segments.properties]
+    always_enabled = true
+    foreground_templates = ["{{ if gt .Code 0 }}#ff0000{{ end }}"]
+
