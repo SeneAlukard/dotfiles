@@ -1,21 +1,21 @@
 return {
-	"nvim-treesitter/nvim-treesitter",
- 	build = ":TSUpdate",
-	config = function()
-		local config = require("nvim-treesitter.configs")
-		config.setup({
-			ensure_installed = { "c" ,"cpp", "lua", "python", "cpp" },
+  "nvim-treesitter/nvim-treesitter",
+  build = ":TSUpdate",
+  config = function()
+    local config = require("nvim-treesitter.configs")
+    config.setup({
+      ensure_installed = { "c", "cpp", "lua", "python", "cpp", "latex" },
 
-			sync_install = false,
+      sync_install = false,
 
-			auto_install = true,
+      auto_install = true,
 
-			highligh = {
+      highligh = {
 
-				enable = true,
+        enable = true,
 
-				additional_vim_regex_highlighting = false,
-			},
-		})
-	end,
+        additional_vim_regex_highlighting = false,
+      },
+    })
+  end,
 }

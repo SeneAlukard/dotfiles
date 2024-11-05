@@ -1,4 +1,5 @@
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$PATH:/opt/codelldb/extension/adapter"
 
 set -o vi
 
