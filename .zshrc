@@ -1,3 +1,14 @@
+export PATH=$PATH:~/.spoofdpi/bin
+export MANPAGER="nvim +Man!"
+if [ -n "${NVIM_LISTEN_ADDRESS+x}" ]; then
+  export MANPAGER="/usr/local/bin/nvr -c 'Man!' -o -"
+fi
+export PATH=/home/xkenshi/usr/local/texlive/2024/bin/x86_64-linux:$PATH
+export MANPATH=/home/xkenshi/usr/local/texlive/2024/texmf-dist/doc/man:$MANPATH
+export INFOPATH=/home/xkenshi/usr/local/texlive/2024/texmf-dist/doc/info:$INFOPATH
+
+export XDG_RUNTIME_DIR=/tmp/xdg-runtime-dir
+
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:/opt/codelldb/extension/adapter"
 
