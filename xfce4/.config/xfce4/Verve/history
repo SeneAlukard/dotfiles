@@ -1,0 +1,9 @@
+clear
+ls
+ls -all
+ls
+clear
+terminal
+159753123Arslan!
+sudo pacman -Syu
+clear

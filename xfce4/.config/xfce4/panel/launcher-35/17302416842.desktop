@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Folder
+Comment=
+Exec=thunar /home/xkenshi/StudyMaterials
+Icon=desktopfolder
+Path=
+Terminal=false
+StartupNotify=false
