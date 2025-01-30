@@ -11,6 +11,29 @@ vim.cmd("set number")
 
 vim.cmd("set relativenumber")
 
+-- Enable list mode to show hidden characters
+vim.opt.list = true
+
+-- Customize how hidden characters are displayed
+vim.opt.listchars = {
+  tab = "> ", -- Show tabs as "> "
+  space = ".", -- Show spaces as "."
+  trail = ".", -- Show trailing spaces as "."
+  eol = "↲", -- Show end-of-line characters as "$"
+  nbsp = "_", -- Show non-breaking spaces as "_"
+  precedes = "<", -- Show characters that precede the visible text as "<"
+  extends = ">", -- Show characters that extend beyond the visible text as ">"
+}
+
+
+-- Optional: Set a keybinding to toggle list mode on/off
+vim.api.nvim_set_keymap('n', '<leader>l', ':set list!<CR>', { noremap = true, silent = true })
+
+-- Optional: Customize the highlight color for hidden characters
+vim.cmd([[highlight SpecialKey ctermfg=8 guifg=#555555]])
+-- Optional: Customize the highlight color for hidden characters
+vim.cmd([[highlight SpecialKey ctermfg=8 guifg=#555555]])
+
 
 --Harpoon Settings
 vim.cmd('highlight! HarpoonInactive guibg=NONE guifg=#63698c')
