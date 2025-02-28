@@ -17,14 +17,13 @@ vim.opt.list = true
 -- Customize how hidden characters are displayed
 vim.opt.listchars = {
   tab = "> ", -- Show tabs as "> "
-  space = ".", -- Show spaces as "."
+  space = ".", -- Show spaces as "...."
   trail = ".", -- Show trailing spaces as "."
   eol = "↲", -- Show end-of-line characters as "$"
   nbsp = "_", -- Show non-breaking spaces as "_"
   precedes = "<", -- Show characters that precede the visible text as "<"
   extends = ">", -- Show characters that extend beyond the visible text as ">"
 }
-
 
 -- Optional: Set a keybinding to toggle list mode on/off
 vim.api.nvim_set_keymap('n', '<leader>l', ':set list!<CR>', { noremap = true, silent = true })
