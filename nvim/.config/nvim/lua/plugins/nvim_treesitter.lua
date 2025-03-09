@@ -4,7 +4,7 @@ return {
   config = function()
     local config = require("nvim-treesitter.configs")
     config.setup({
-      ensure_installed = { "c", "cpp", "lua", "python", "cpp", "latex", "matlab" },
+      ensure_installed = { "c", "cpp", "lua", "python", "cpp", "latex", "matlab", "verilog", "nix" },
 
       sync_install = false,
 

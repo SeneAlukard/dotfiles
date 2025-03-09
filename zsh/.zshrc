@@ -1,4 +1,4 @@
-export LD_LIBRARY_PATH=/usr/local/MATLAB/R2024b/extern/bin/glnxa64:/usr/local/MATLAB/R2024b/sys/os/glnxa64:$LD_LIBRARY_PATH
+export TERM="xterm-256color"
 export MANPAGER="nvim +Man!"
 if [ -n "${NVIM_LISTEN_ADDRESS+x}" ]; then
   export MANPAGER="/usr/local/bin/nvr -c 'Man!' -o -"
