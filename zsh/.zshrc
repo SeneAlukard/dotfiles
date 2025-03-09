@@ -74,8 +74,6 @@ zinit cdreplay -q
 eval "$(starship init zsh)"
 
 
-#Oh-My-Posh Setup Config
-#eval "$(oh-my-posh init zsh --config "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/heads/main/themes/craver.omp.json" )"
 
 # Keybindings
 bindkey -e

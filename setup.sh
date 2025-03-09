@@ -10,7 +10,7 @@ install_if_missing() {
   if ! command -v "$1" &>/dev/null; then
     if [ "$SIMULATE" = false ]; then
       echo "Installing $1..."
-      sudo apt update && sudo apt install -y "$1"
+      sudo pacman -S --needed --noconfirm "$1"
     else
       echo "Would install: $1"
     fi
@@ -28,65 +28,57 @@ perform_action() {
   fi
 }
 
-# Step 1: Install Essential Tools
-echo "Installing required tools..."
+# Step 1: Install Essential System Tools
+echo "Installing required system packages..."
 install_if_missing "git"
-install_if_missing "stow"
-install_if_missing "zsh"
-install_if_missing "fzf"
-install_if_missing "neovim"
-install_if_missing "tmux"
 install_if_missing "curl"
 install_if_missing "unzip"
+install_if_missing "xfce4"
+install_if_missing "xfce4-goodies"
+install_if_missing "xorg-server"
+install_if_missing "xorg-xinit"
+install_if_missing "pulseaudio"
+install_if_missing "pavucontrol"
+install_if_missing "alsa-utils"
+install_if_missing "blueman"
+install_if_missing "systemd-networkd"
+install_if_missing "systemd-resolved"
 
-# Step 2: Install Oh My Posh
-OHMYPOSH_BIN="/usr/local/bin/oh-my-posh"
-OHMYPOSH_THEME_DIR="$HOME/.config/ohmyposh"
-if [ ! -f "$OHMYPOSH_BIN" ]; then
-  perform_action "sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O $OHMYPOSH_BIN"
-  perform_action "sudo chmod +x $OHMYPOSH_BIN"
-fi
-if [ ! -d "$OHMYPOSH_THEME_DIR" ]; then
-  perform_action "mkdir -p $OHMYPOSH_THEME_DIR"
-  perform_action "wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O /tmp/themes.zip"
-  perform_action "unzip /tmp/themes.zip -d $OHMYPOSH_THEME_DIR"
-  perform_action "rm /tmp/themes.zip"
+# Step 2: Enable systemd-networkd and systemd-resolved
+echo "Enabling systemd-networkd and systemd-resolved..."
+sudo systemctl enable --now systemd-networkd
+sudo systemctl enable --now systemd-resolved
+
+# Set systemd-resolved as DNS resolver
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+# Step 3: Install Nix and Home-Manager
+echo "Installing Nix package manager..."
+if ! command -v nix &>/dev/null; then
+  perform_action "curl -L https://nixos.org/nix/install | sh"
+  . ~/.nix-profile/etc/profile.d/nix.sh
 fi
 
-# Step 3: Clone Dotfiles Repository
+# Step 4: Setting up Home-Manager
+echo "Setting up Home-Manager..."
+if [ ! -d "$HOME/.config/home-manager" ]; then
+  mkdir -p ~/.config
+  ln -s ~/dotfiles/nix/.config/home-manager ~/.config/home-manager
+fi
+
+# Step 5: Apply Nix Configuration
+echo "Applying Nix configuration..."
+home-manager switch
+
+# Step 6: Clone Dotfiles Repository
 if [ ! -d "$DOTFILES_DIR" ]; then
   perform_action "git clone $REPO_URL $DOTFILES_DIR"
 fi
 
-# Step 4: Use GNU Stow to Symlink Dotfiles
+# Step 7: Use GNU Stow to Symlink Dotfiles
 if [ -d "$DOTFILES_DIR" ]; then
   echo "Creating symlinks using stow..."
-  perform_action "cd $DOTFILES_DIR && stow --simulate alacritty nvim ohmyposh xfce4 gtk3 gtk4 tmux zsh icons themes"
-fi
-
-# Step 5: Configure Zsh Plugins
-ZSH_CUSTOM="$HOME/.oh-my-zsh/custom/plugins"
-if [ ! -d "$ZSH_CUSTOM" ]; then
-  perform_action "git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh"
-fi
-perform_action "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/zsh-syntax-highlighting"
-perform_action "git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/zsh-autosuggestions"
-perform_action "git clone https://github.com/zsh-users/zsh-completions.git $ZSH_CUSTOM/zsh-completions"
-perform_action "git clone https://github.com/ajeetdsouza/zoxide.git ~/.zoxide"
-perform_action "zoxide init zsh >> ~/.zshrc"
-
-# Step 6: Install Neovim Plugins
-NVIM_CONFIG="$HOME/.config/nvim"
-if [ -d "$NVIM_CONFIG" ]; then
-  echo "Installing Neovim plugins using Lazy.nvim..."
-  perform_action "curl -fsSL https://raw.githubusercontent.com/folke/lazy.nvim/main/lazy.lua > $NVIM_CONFIG/lazy/lazy.nvim"
-  perform_action "nvim --headless +Lazy! sync +qa"
-fi
-
-# Step 7: Install Tmux Plugin Manager (TPM)
-TPM_DIR="$HOME/.tmux/plugins/tpm"
-if [ ! -d "$TPM_DIR" ]; then
-  perform_action "git clone https://github.com/tmux-plugins/tpm $TPM_DIR"
+  perform_action "cd $DOTFILES_DIR && stow --simulate xfce4 gtk3 gtk4 icons themes"
 fi
 
 # Final Message
