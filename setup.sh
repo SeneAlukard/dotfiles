@@ -4,6 +4,10 @@
 DOTFILES_DIR="$HOME/dotfiles"
 REPO_URL="git@github.com:SeneAlukard/dotfiles.git"
 SIMULATE=false # Set to true to simulate the setup without making changes
+WIFI_INTERFACE="wlp0s20f3"
+SSID="merkur"
+WIFI_PASSWORD="yozgat1322"
+NETWORKD_CONFIG="/etc/systemd/network/merkur.network"
 
 # Function to install a package if not already installed
 install_if_missing() {
@@ -28,29 +32,49 @@ perform_action() {
   fi
 }
 
-# Step 1: Install Essential System Tools
-echo "Installing required system packages..."
+# Step 1: Install Essential Tools
+echo "Installing required tools..."
 install_if_missing "git"
 install_if_missing "curl"
 install_if_missing "unzip"
-install_if_missing "xfce4"
-install_if_missing "xfce4-goodies"
-install_if_missing "xorg-server"
-install_if_missing "xorg-xinit"
-install_if_missing "pulseaudio"
-install_if_missing "pavucontrol"
-install_if_missing "alsa-utils"
-install_if_missing "blueman"
+install_if_missing "wpa_supplicant"
 install_if_missing "systemd-networkd"
 install_if_missing "systemd-resolved"
+install_if_missing "stow"
+install_if_missing "nano"
+install_if_missing "lightdm"
+install_if_missing "lightdm-gtk-greeter"
 
-# Step 2: Enable systemd-networkd and systemd-resolved
-echo "Enabling systemd-networkd and systemd-resolved..."
+# Step 2: Configure Wi-Fi and systemd-networkd
+echo "Configuring Wi-Fi with wpa_supplicant..."
+wpa_passphrase "$SSID" "$WIFI_PASSWORD" | sudo tee /etc/wpa_supplicant/wpa_supplicant-${WIFI_INTERFACE}.conf > /dev/null
+sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant-${WIFI_INTERFACE}.conf
+
+# Create systemd-networkd configuration if not exists
+echo "Configuring systemd-networkd..."
+if [ ! -f "$NETWORKD_CONFIG" ]; then
+  sudo bash -c "cat > $NETWORKD_CONFIG" <<EOL
+[Match]
+Name=$WIFI_INTERFACE
+
+[Network]
+DHCP=yes
+
+[DHCP]
+UseDNS=yes
+EOL
+fi
+
+# Enable systemd-networkd and resolved
 sudo systemctl enable --now systemd-networkd
 sudo systemctl enable --now systemd-resolved
 
-# Set systemd-resolved as DNS resolver
-sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+# Enable wpa_supplicant
+sudo systemctl enable --now wpa_supplicant@${WIFI_INTERFACE}.service
+
+# Enable LightDM
+echo "Enabling LightDM for GUI login..."
+sudo systemctl enable --now lightdm
 
 # Step 3: Install Nix and Home-Manager
 echo "Installing Nix package manager..."
@@ -66,23 +90,20 @@ if [ ! -d "$HOME/.config/home-manager" ]; then
   ln -s ~/dotfiles/nix/.config/home-manager ~/.config/home-manager
 fi
 
-# Step 5: Apply Nix Configuration
+# Step 5: Stow Nix Configuration
+echo "Symlinking Nix configuration..."
+perform_action "cd $DOTFILES_DIR && stow nix"
+
+# Step 6: Apply Nix Configuration
 echo "Applying Nix configuration..."
 home-manager switch
 
-# Step 6: Clone Dotfiles Repository
-if [ ! -d "$DOTFILES_DIR" ]; then
-  perform_action "git clone $REPO_URL $DOTFILES_DIR"
-fi
-
-# Step 7: Use GNU Stow to Symlink Dotfiles
-if [ -d "$DOTFILES_DIR" ]; then
-  echo "Creating symlinks using stow..."
-  perform_action "cd $DOTFILES_DIR && stow --simulate xfce4 gtk3 gtk4 icons themes"
-fi
+# Step 7: Stow All Dotfiles
+echo "Creating symlinks for all configurations..."
+perform_action "cd $DOTFILES_DIR && stow xfce4 gtk3 gtk4 icons themes nvim alacritty zsh tmux"
 
 # Final Message
-echo "Setup complete! Your environment has been configured."
+echo "Setup complete! Your environment has been configured. Reboot to start XFCE4 with LightDM."
 if [ "$SIMULATE" = true ]; then
   echo "This was a simulation. No changes were made."
 fi

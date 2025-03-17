@@ -1,101 +1,91 @@
-# Arch Linux'u `/dev/sda8` Üzerine Kurma ve `/home` & `swap` Paylaşma
 
-Bu kılavuz, mevcut Arch Linux kurulumunun yanına `/dev/sda8` üzerine ikinci bir Arch Linux kurulumu yapmayı ve `/home` ile `swap` bölümlerini paylaşmayı açıklar.
+# Installing Arch Linux on `/dev/sda8` and Sharing `/home` & `swap`
 
-## **1. Arch Linux Live ISO ile Boot Et**
-Arch Linux Live ISO'yu indir, USB'ye yazdır ve canlı sisteme boot et.
+This guide shows how to install Arch Linux on `/dev/sda8` alongside an existing system and share `/home` and `swap`.
 
-## **2. Bölümleri Formatla ve Mount Et**
-Yeni Arch Linux sistemini kurmak için `/dev/sda8`'i formatla ve bağla:
+1. **Boot from Arch Live ISO**
+Download the Arch ISO, write it to a USB, and boot the live system.
+
+2. **Format and Mount Partitions**
 ```sh
 mkfs.btrfs /dev/sda8
 mount /dev/sda8 /mnt
-```
-
-Mevcut `/home` bölümünü bağla:
-```sh
 mount /dev/sda9 /mnt/home
+swapon /dev/sdaX  # If swap exists
 ```
 
-Swap bölümü varsa etkinleştir:
-```sh
-swapon /dev/sdaX  # Swap bölümünü kullan
-```
-
-## **3. Temel Sistemi Kur**
+3. **Install Base System**
 ```sh
 pacstrap /mnt base linux linux-firmware
 ```
-Alternatif olarak LTS kernel kullanmak istersen:
+For LTS kernel:
 ```sh
 pacstrap /mnt base linux-lts linux-firmware
 ```
 
-## **4. Fstab Dosyasını Oluştur**
+4. **Generate Fstab**
 ```sh
 genfstab -U /mnt >> /mnt/etc/fstab
-cat /mnt/etc/fstab  # Kontrol et
+cat /mnt/etc/fstab
 ```
-Burada `/home` ve `swap` bölümlerinin listelendiğinden emin ol.
 
-## **5. Yeni Sisteme Chroot Yap**
+5. **Chroot into New System**
 ```sh
 arch-chroot /mnt
 ```
 
-## **6. Temel Sistem Ayarlarını Yap**
+6. **Configure Basic Settings**
 ```sh
 ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
 hwclock --systohc
 echo "arch-second" > /etc/hostname
 ```
-Lokalizasyon:
+Localization:
 ```sh
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
-echo "KEYMAP=us" > /etc/vconsole.conf
 locale-gen
 ```
-Root şifresini belirle:
+Set root password:
 ```sh
 passwd
 ```
 
-## **7. Kullanıcı Hesabını Ayarla**
+7. **Create User Account**
 ```sh
 useradd -m -G wheel -s /bin/zsh xkenshi
 passwd xkenshi
 ```
-Sudo erişimi ver:
+Grant sudo:
 ```sh
 pacman -S sudo
 echo "xkenshi ALL=(ALL) ALL" >> /etc/sudoers
 ```
 
-## **8. GRUB’u Güncelle**
-Mevcut EFI bölümü ile uğraşmaya gerek yok. Sadece eski Arch sistemin GRUB ayarlarını güncelle:
+8. **Update GRUB**
 ```sh
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
-Bu işlem yeni Arch Linux kurulumunu GRUB menüsüne ekleyecektir.
 
-## **9. Reboot ve Test**
+9. **Reboot and Test**
 ```sh
 exit
 umount -R /mnt
 reboot
 ```
-GRUB menüsünde yeni Arch Linux girişinin olup olmadığını kontrol et.
-
-Eğer GRUB yeni sistemi görmezse, ilk Arch Linux’a girip şu komutu çalıştır:
+If the new system doesn’t show, run:
 ```sh
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-## **Sonuç**
-✅ **İki Arch Linux sistemi çalışır durumda olacak.**
-✅ **Aynı `/home` dizinini paylaşacaklar.**
-✅ **Aynı `swap` bölümünü kullanacaklar.**
+**Result**
+- Two Arch Linux systems working.
+- Shared `/home` and `swap`.
 
-Bir hata alırsan veya ekleme yapmak istersen detaylı bilgiyi paylaşabilirsin. 🚀
+---
 
+**Wi-Fi Unblock for iwctl**
+To unblock Wi-Fi:
+```sh
+sudo rfkill unblock wifi
+```
 

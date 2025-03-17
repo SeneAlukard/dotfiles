@@ -171,21 +171,21 @@
       <property name="button-single-row" type="bool" value="false"/>
       <property name="recent" type="array">
         <value type="string" value="spotify.desktop"/>
-        <value type="string" value="chromium.desktop"/>
-        <value type="string" value="lstopo.desktop"/>
-        <value type="string" value="org.kde.kdeconnect.app.desktop"/>
-        <value type="string" value="bitwarden.desktop"/>
-        <value type="string" value="onlyoffice-desktopeditors.desktop"/>
         <value type="string" value="xfce-settings-manager.desktop"/>
-        <value type="string" value="xfce4-settings-editor.desktop"/>
-        <value type="string" value="oracle-sqldeveloper.desktop"/>
-        <value type="string" value="xfce4-file-manager.desktop"/>
+        <value type="string" value="org.qbittorrent.qBittorrent.desktop"/>
+        <value type="string" value="org.kde.kdeconnect.app.desktop"/>
+        <value type="string" value="firefox.desktop"/>
+        <value type="string" value="Rome Total War.desktop"/>
+        <value type="string" value="discord.desktop"/>
+        <value type="string" value="xfce-backdrop-settings.desktop"/>
+        <value type="string" value="mechvibes.desktop"/>
+        <value type="string" value="xfce4-mime-settings.desktop"/>
       </property>
     </property>
     <property name="plugin-7" type="string" value="clock"/>
     <property name="plugin-8" type="string" value="pulseaudio">
       <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
-      <property name="known-players" type="string" value="Chromium;firefox;kdeconnect.mpris_28955702c79d410583d24d2aafcd602e;kdeconnect.mpris_e69c3d8e44274ad78c939dfe823f9c40;org.kde.kdeconnect.app;spotify"/>
+      <property name="known-players" type="string" value="Chromium;firefox;kdeconnect.mpris_28955702c79d410583d24d2aafcd602e;kdeconnect.mpris_843cdc48f2124f31a58e7208b031fd7d;kdeconnect.mpris_e69c3d8e44274ad78c939dfe823f9c40;org.kde.kdeconnect.app;spotify"/>
     </property>
     <property name="plugin-14" type="string" value="netload"/>
     <property name="plugin-9" type="string" value="battery"/>
