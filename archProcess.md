@@ -6,7 +6,21 @@ This guide shows how to install Arch Linux on `/dev/sda8` alongside an existing 
 ### 1. **Boot from Arch Live ISO**
 Download the Arch ISO, write it to a USB, and boot the live system.
 
-### 2. **Wi-Fi Unblock for iwctl and Connecting to Hidden Network**
+### 2. **Format and Mount Partitions**
+Format and mount the partitions:
+```sh
+mkfs.btrfs /dev/sda8
+mount /dev/sda8 /mnt
+mount /dev/sda9 /mnt/home
+swapon /dev/sdaX  # If swap exists
+```
+
+For LTS kernel:
+```sh
+pacstrap /mnt base linux-lts linux-firmware efibootmgr grub os-prober iw wpa_supplicant systemd-networkd nano
+```
+
+### 3. **Wi-Fi Unblock for iwctl and Connecting to Hidden Network**
 To unblock Wi-Fi, run:
 ```sh
 sudo rfkill unblock wifi
@@ -35,20 +49,6 @@ Next, to connect to a hidden Wi-Fi network using `iwctl`:
    ```sh
    station wlan0 show
    ```
-
-### 3. **Format and Mount Partitions**
-Format and mount the partitions:
-```sh
-mkfs.btrfs /dev/sda8
-mount /dev/sda8 /mnt
-mount /dev/sda9 /mnt/home
-swapon /dev/sdaX  # If swap exists
-```
-
-For LTS kernel:
-```sh
-pacstrap /mnt base linux-lts linux-firmware efibootmgr grub os-prober iw wpa_supplicant systemd-networkd
-```
 
 ### 4. **Generate Fstab**
 Generate the `fstab` file:
@@ -122,4 +122,3 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 - Two Arch Linux systems working.
 - Shared `/home` and `swap`.
 
----
