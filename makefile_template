@@ -1,0 +1,98 @@
+# Generic Makefile Template
+# This can be used for C/C++ projects with customizable options
+
+# Compiler options
+CC = gcc
+CXX = g++
+CFLAGS = -Wall -Wextra -g
+CXXFLAGS = -Wall -Wextra -g -std=c++17
+
+# Directories
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
+INC_DIR = include
+LIB_DIR = lib
+
+# Files
+SRCS = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(wildcard $(SRC_DIR)/*.c)) \
+       $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(wildcard $(SRC_DIR)/*.cpp))
+EXEC = $(BIN_DIR)/program
+
+# Libraries
+LIBS = 
+# Add libraries as needed, e.g., LIBS = -lm -lpthread
+
+# Include paths
+INC = -I$(INC_DIR)
+# Add more include paths as needed, e.g., INC += -I/usr/local/include
+
+# Make all directories
+MKDIR_P = mkdir -p
+
+# Default target
+all: dirs $(EXEC)
+
+# Create necessary directories
+dirs:
+	$(MKDIR_P) $(SRC_DIR) $(OBJ_DIR) $(BIN_DIR) $(INC_DIR) $(LIB_DIR)
+
+# Build the executable
+$(EXEC): $(OBJS)
+	$(CXX) $^ $(LIBS) -o $@
+
+# Compile C source files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+
+# Compile C++ source files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
+
+# Clean build files
+clean:
+	rm -f $(OBJS) $(EXEC)
+
+# Clean everything, including directories
+distclean: clean
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+# Create a sample source file if none exists
+init:
+	@if [ ! -f $(SRC_DIR)/main.cpp ]; then \
+		echo "Creating sample main.cpp file..."; \
+		$(MKDIR_P) $(SRC_DIR); \
+		echo "#include <iostream>" > $(SRC_DIR)/main.cpp; \
+		echo "" >> $(SRC_DIR)/main.cpp; \
+		echo "int main(int argc, char *argv[]) {" >> $(SRC_DIR)/main.cpp; \
+		echo "    std::cout << \"Hello, World!\" << std::endl;" >> $(SRC_DIR)/main.cpp; \
+		echo "    return 0;" >> $(SRC_DIR)/main.cpp; \
+		echo "}" >> $(SRC_DIR)/main.cpp; \
+		echo "Sample main.cpp created in $(SRC_DIR)/"; \
+	else \
+		echo "$(SRC_DIR)/main.cpp already exists."; \
+	fi
+
+# Phony targets
+.PHONY: all dirs clean distclean init
+
+# Debug information
+debug:
+	@echo "Source files: $(SRCS)"
+	@echo "Object files: $(OBJS)"
+	@echo "Executable: $(EXEC)"
+	@echo "Include paths: $(INC)"
+	@echo "Libraries: $(LIBS)"
+
+# Help
+help:
+	@echo "Available targets:"
+	@echo "  all        - Build the executable (default)"
+	@echo "  dirs       - Create necessary directories"
+	@echo "  clean      - Remove object files and executable"
+	@echo "  distclean  - Remove object files, executable, and directories"
+	@echo "  init       - Create a sample main.cpp file if none exists"
+	@echo "  debug      - Display debug information about the build"
+	@echo "  help       - Display this help message"
+

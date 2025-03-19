@@ -1,104 +1,117 @@
-# Dotfiles Configuration
+# Dotfiles
 
-## Automated Setup
+## Overview
 
-This repository includes an automated `setup.sh` script that configures your environment with all necessary tools, plugins, and configurations. Follow the steps below to get started.
+This repository contains my personal dotfiles for Arch Linux, designed to provide a consistent computing environment across multiple machines. It includes configuration files for various tools and applications, as well as scripts to automate the installation and setup processes.
 
-### Requirements
+## Features
 
-Ensure the following are installed on your system:
-- **Git**: For version control and managing your dotfiles.
-- **GNU Stow**: For creating and managing symbolic links.
+- **Modular Design**: Configurations are organized by application, making it easy to apply only what you need
+- **Installation Guide**: Detailed guide for installing Arch Linux (with dual-boot options)
+- **Automated Setup**: Scripts to install and configure all necessary applications
+- **Development Tools**: Configurations for Neovim, Tmux, Git, and more
+- **Desktop Environment**: XFCE4 configuration with custom themes and keybindings
+- **Terminal Setup**: Alacritty configuration with Zsh, custom prompt, and plugins
 
-### Installation
+## Components
 
-1. **Clone the Repository**
+### Shell
+- **Zsh**: Enhanced shell with plugins and customizations
+- **Tmux**: Terminal multiplexer with custom keybindings and plugins
+- **Starship**: Cross-shell prompt with custom configuration
+
+### Editor
+- **Neovim**: Modern Vim with LSP support, code completion, and more
+  - Custom keybindings and plugins
+  - Language-specific configurations
+  - Git integration
+
+### Terminal
+- **Alacritty**: Fast, GPU-accelerated terminal emulator
+  - Custom colors and themes
+  - Font configuration
+
+### Desktop Environment
+- **XFCE4**: Lightweight and customizable desktop environment
+  - Custom panel layouts
+  - Keyboard shortcuts
+  - Theme and icon configuration
+
+### Development
+- **Git**: Version control configuration
+- **Language-specific tools**: Configuration for Python, JavaScript, C/C++, and more
+
+## Installation
+
+### Full Arch Linux Installation
+
+To install Arch Linux from scratch:
+
+1. Boot from the Arch Linux installation media
+2. Follow the instructions in the [Arch Installation Guide](archInstallGuide.md)
+3. After installation, clone this repository and run the setup script
+
+### Setting Up on Existing Installation
+
+To set up these dotfiles on an existing Arch Linux installation:
+
+1. Clone the repository:
    ```bash
-   git clone git@github.com:SeneAlukard/dotfiles.git ~/dotfiles
+   git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
    ```
 
-2. **Run the Setup Script**
-   Navigate to the cloned repository and execute the setup script:
+2. Run the setup script:
    ```bash
    cd ~/dotfiles
    chmod +x setup.sh
    ./setup.sh
    ```
 
-3. **Simulate the Setup (Optional)**
-   To preview the changes the script will make, enable simulation mode:
+3. For a preview of what the script will do without making changes:
    ```bash
    SIMULATE=true ./setup.sh
    ```
 
-### What the Script Does
-- Installs essential tools: `git`, `stow`, `zsh`, `fzf`, `neovim`, `tmux`, `curl`, `unzip`.
-- Configures **Oh My Posh** and downloads themes.
-- Sets up Zsh plugins, including:
-  - `zsh-syntax-highlighting`
-  - `zsh-autosuggestions`
-  - `zsh-completions`
-  - `zoxide`
-  - `fzf`
-- Configures **Neovim** with Lazy.nvim for plugin management.
-- Installs **Tmux Plugin Manager (TPM)** and essential Tmux plugins.
-- Symlinks your dotfiles to their appropriate locations using `stow`.
+## Structure
 
----
+The repository is structured as follows:
 
-## Tools and Configurations
+```
+dotfiles/
+├── alacritty/               # Alacritty terminal configuration
+├── archInstallGuide.md      # Arch Linux installation guide
+├── gtk3/                    # GTK3 theme configuration
+├── gtk4/                    # GTK4 theme configuration
+├── nix/                     # Nix package manager configuration
+├── nvim/                    # Neovim configuration
+├── README.md                # This file
+├── setup.sh                 # Setup script
+├── tmux/                    # Tmux configuration
+├── xfce4/                   # XFCE4 configuration
+└── zsh/                     # Zsh configuration
+```
 
-### Terminal
-- **Terminal Emulator**: [Alacritty](https://github.com/alacritty/alacritty)
+## Customization
 
-### Shell
-- **Shell**: [Zsh](https://www.zsh.org/)
+Feel free to modify any of the configuration files to suit your needs. The setup script is designed to back up your existing configurations before applying the new ones.
 
-#### Zsh Plugins
-- `zsh-syntax-highlighting`: Syntax highlighting for Zsh.
-- `zsh-autosuggestions`: Fish-like autosuggestions for Zsh.
-- `zsh-completions`: Additional completion definitions for Zsh.
-- `zoxide`: Smarter `cd` command for quick directory navigation.
-- `fzf`: Fuzzy finder for the command line.
-- `starship`: Minimal and customizable prompt for any shell.
-- `powerlevel10k`: Theme for Zsh that includes customizable status information.
-- `zsh-history-substring-search`: Search Zsh history by substring.
+You can also selectively apply configurations for specific tools by using GNU Stow:
 
-### Editor
-- **Editor**: [Neovim](https://neovim.io/)
+```bash
+cd ~/dotfiles
+stow nvim     # Apply only Neovim configuration
+stow zsh      # Apply only Zsh configuration
+```
 
-#### Neovim Plugins
-Includes plugins for:
-- Aesthetic themes (`catppuccin`, `alpha`, etc.).
-- Code completion and formatting (`completions`, `conform`).
-- File navigation and management (`telescope`, `neotree`).
-- Advanced syntax highlighting (`nvim_treesitter`).
-- Distraction-free coding (`zen-mode`).
+## Credits
 
-### Tmux
-- **Configuration**: [Tmux](https://github.com/tmux/tmux/wiki)
+These dotfiles are inspired by and incorporate elements from various open-source projects and other dotfiles repositories. Special thanks to:
 
-#### Tmux Plugins
-- `tmux-plugins/tpm`: Tmux Plugin Manager.
-- `tmux-plugins/tmux-sensible`: Sensible default settings for Tmux.
-- `dracula/tmux`: Dracula theme for Tmux.
-- `tmux-plugins/tmux-resurrect`: Restore your Tmux sessions.
-- `tmux-plugins/tmux-continuum`: Continuous saving of Tmux environment.
-- `thepante-tmux-git-autofetch`: Auto-fetch Git repos when switching panes or windows.
+- [Dracula Theme](https://draculatheme.com/)
+- [Gruvbox Theme](https://github.com/morhetz/gruvbox)
+- [The Primeagen](https://github.com/ThePrimeagen) for Neovim configurations
+- [Luke Smith](https://github.com/LukeSmithxyz) for Zsh and terminal configurations
 
----
+## License
 
-## Desktop Environment
-- **Desktop Environment**: [Xfce](https://www.xfce.org/)
-
----
-
-## Key Features
-- Modular dotfiles structure for easy management.
-- Automated setup script to streamline installation.
-- Focused on productivity and clean, customizable configurations.
-
----
-
-For any issues or questions, feel free to open an issue or contact me.
-
+This project is licensed under the MIT License - see the LICENSE file for details.
