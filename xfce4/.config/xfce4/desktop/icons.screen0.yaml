@@ -4,6 +4,13 @@
 configs:
 - level: 0
   monitors:
+  - id: "102a3ef64e6e52303e51139bb22646b78cf8d477"
+    display_name: "BOE 0x08D5 (eDP1)"
+    geometry:
+      x: 0
+      y: 0
+      width: 1920
+      height: 1080
   - id: "7b20a0f9a3230b6c6a61694315407d912621a427"
     display_name: "BOE 0x08D5 (eDP-1)"
     geometry:

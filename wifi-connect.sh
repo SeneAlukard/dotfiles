@@ -424,13 +424,13 @@ EOF
         
         # Generate PSK (Pre-Shared Key) for WPA networks
         local psk
-        if [[ "$password" =~ ^[0-9a-fA-F]{64}$ ]]; then
+        #if [[ "$password" =~ ^[0-9a-fA-F]{64}$ ]]; then
             # If password is already a 64-character hex PSK, use it directly
-            psk="$password"
-        else
+        #    psk="$password"
+        #else
             # Generate PSK from passphrase
-            psk=$(wpa_passphrase "$target_ssid" "$password" | grep -o 'psk=[0-9a-fA-F]*' | cut -d= -f2)
-        fi
+            psk=$(wpa_passphrase "$target_ssid" "$password" | grep 'psk=' | sed -n '2p' | cut -d= -f2)
+        #fi
         
         # Create wpa_supplicant configuration file
         sudo tee "$wpa_conf_file" > /dev/null << EOF
