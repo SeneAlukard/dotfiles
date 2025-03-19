@@ -155,7 +155,7 @@ stow_dotfiles() {
     BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
     perform_action "mkdir -p $BACKUP_DIR"
     
-    for config in "$HOME/.zshrc" "$HOME/.tmux.conf" "$HOME/.config/nvim" "$HOME/.config/alacritty"; do
+    for config in "$HOME/.zshrc" "$HOME/.tmux.conf" "$HOME/.config/nvim" "$HOME/.config/alacritty" "$HOME/.config/home-manager" "$HOME/.config/nix"; do
       if [ -e "$config" ]; then
         perform_action "cp -r $config $BACKUP_DIR/"
       fi
@@ -170,8 +170,7 @@ stow_dotfiles() {
       "ohmyposh"
       "tmux"
       "zsh"
-      "gtk3"
-      "gtk4"
+      "gtk"
       "xfce4"
       "nix"  # Make sure to stow nix configs if they exist
     )
@@ -214,6 +213,52 @@ stow_dotfiles() {
         print_warning "Directory $dir not found in dotfiles."
       fi
     done
+    
+    # Now apply Nix configuration if Nix is enabled and installed
+    if [ "$NIX_ENABLE" = true ] && command -v nix &>/dev/null; then
+      print_section "Applying Nix Configuration"
+      
+      # Apply flake configuration if it exists
+      if [ -f "$DOTFILES_DIR/nix/flake.nix" ]; then
+        print_info "Applying Nix flake configuration..."
+        if [ "$SIMULATE" = false ]; then
+          # Move to dotfiles and apply the flake
+          perform_action "cd $DOTFILES_DIR/nix && nix flake update"
+          perform_action "cd $DOTFILES_DIR/nix && nix build .#homeConfigurations.$USER.activationPackage --impure"
+          perform_action "cd $DOTFILES_DIR/nix && ./result/activate"
+          print_success "Nix flake configuration applied."
+        else
+          print_info "Would apply Nix flake configuration."
+        fi
+      elif [ -f "$DOTFILES_DIR/nix/.config/home-manager/home.nix" ] || [ -f "$HOME/.config/home-manager/home.nix" ]; then
+        # If there's no flake but there is a home.nix, use home-manager
+        print_info "Setting up Home Manager for Nix..."
+        if ! command -v home-manager &>/dev/null; then
+          if [ "$SIMULATE" = false ]; then
+            # Add the Home Manager channel
+            perform_action "nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager"
+            perform_action "nix-channel --update"
+            
+            # Install Home Manager
+            perform_action "nix-shell '<home-manager>' -A install"
+            print_success "Home Manager installed."
+          else
+            print_info "Would set up Home Manager for Nix."
+          fi
+        fi
+        
+        # Apply Home Manager configuration
+        if [ "$SIMULATE" = false ]; then
+          print_info "Building Home Manager environment..."
+          perform_action "home-manager switch"
+          print_success "Home Manager environment built and activated."
+        else
+          print_info "Would build and activate Home Manager environment."
+        fi
+      else
+        print_warning "No Nix configuration (flake.nix or home.nix) found in dotfiles."
+      fi
+    fi
   else
     print_error "Dotfiles directory not found. Cannot stow."
     return 1
@@ -323,6 +368,19 @@ setup_nix() {
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi
       print_success "Nix installed. You may need to restart your shell or source Nix environment."
+      
+      # Give the user a chance to restart their shell if needed
+      print_warning "For Nix to work properly in this session, you may need to source the Nix environment."
+      read -p "Would you like to source the Nix environment now? (y/n) " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+          print_success "Nix environment sourced."
+        else
+          print_warning "Nix environment file not found. You may need to restart your shell."
+        fi
+      fi
     else
       print_info "Would install Nix package manager."
     fi
@@ -338,46 +396,9 @@ setup_nix() {
     print_success "Nix flakes enabled."
   fi
   
-  # Apply flake configuration if it exists
-  if [ -f "$DOTFILES_DIR/nix/flake.nix" ]; then
-    print_info "Applying Nix flake configuration..."
-    if [ "$SIMULATE" = false ]; then
-      # Move to dotfiles and apply the flake
-      perform_action "cd $DOTFILES_DIR/nix && nix flake update"
-      perform_action "cd $DOTFILES_DIR/nix && nix build .#homeConfigurations.$USER.activationPackage --impure"
-      perform_action "cd $DOTFILES_DIR/nix && ./result/activate"
-      print_success "Nix flake configuration applied."
-    else
-      print_info "Would apply Nix flake configuration."
-    fi
-  elif [ -f "$DOTFILES_DIR/nix/.config/home-manager/home.nix" ]; then
-    # If there's no flake but there is a home.nix, use home-manager
-    print_info "Setting up Home Manager for Nix..."
-    if ! command -v home-manager &>/dev/null; then
-      if [ "$SIMULATE" = false ]; then
-        # Add the Home Manager channel
-        perform_action "nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager"
-        perform_action "nix-channel --update"
-        
-        # Install Home Manager
-        perform_action "nix-shell '<home-manager>' -A install"
-        print_success "Home Manager installed."
-      else
-        print_info "Would set up Home Manager for Nix."
-      fi
-    fi
-    
-    # Apply Home Manager configuration
-    if [ "$SIMULATE" = false ]; then
-      print_info "Building Home Manager environment..."
-      perform_action "home-manager switch"
-      print_success "Home Manager environment built and activated."
-    else
-      print_info "Would build and activate Home Manager environment."
-    fi
-  else
-    print_warning "No Nix configuration (flake.nix or home.nix) found in dotfiles."
-  fi
+  # Note: We're NOT applying flake configuration here yet
+  # We'll wait until after we've stowed the dotfiles
+  print_info "Nix setup complete. Configuration will be applied after dotfiles are stowed."
 }
 
 # Final setup verification
@@ -451,21 +472,21 @@ main() {
   # Step 2: Clone or update dotfiles repository
   setup_dotfiles_repo
   
-  # Step 3: Use GNU Stow to symlink dotfiles
-  stow_dotfiles
-  
-  # Step 4: Set up fonts
-  setup_fonts
-  
-  # Step 5: Set up XFCE
-  setup_xfce
-  
-  # Step 6: Set up Nix if enabled
+  # Step 3: Set up Nix if enabled (before stowing dotfiles)
   if [ "$NIX_ENABLE" = true ]; then
     setup_nix
   else
     print_info "Nix setup is disabled. Skipping."
   fi
+  
+  # Step 4: Now use GNU Stow to symlink dotfiles (after Nix is set up)
+  stow_dotfiles
+  
+  # Step 5: Set up fonts
+  setup_fonts
+  
+  # Step 6: Set up XFCE
+  setup_xfce
   
   # Final verification
   verify_setup

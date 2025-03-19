@@ -360,4 +360,9 @@ After basic installation, run the included `setup.sh` script to configure your d
 5. Tmux with custom configurations
 6. And more!
 
-For detailed information about the customization options, see the README file in this repository.
+
+#### Nix Config
+```sh
+nix build .#homeConfigurations.yourUsername.activationPackage --impure
+./result/activate
+```

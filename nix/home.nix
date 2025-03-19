@@ -1,8 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  home.username = "xkenshi";
-  home.homeDirectory = "/home/xkenshi";
+  imports = [
+    ./modules/xfce.nix
+    ./modules/themes.nix
+  ];
+
+  home.username = "xkea";
+  home.homeDirectory = "/home/xkea";
 
   home.stateVersion = "23.11"; # Adjust to match your Nixpkgs version
 
