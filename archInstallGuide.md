@@ -361,8 +361,3 @@ After basic installation, run the included `setup.sh` script to configure your d
 6. And more!
 
 
-#### Nix Config
-```sh
-nix build .#homeConfigurations.yourUsername.activationPackage --impure
-./result/activate
-```
