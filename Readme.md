@@ -16,26 +16,32 @@ This repository contains my personal dotfiles for Arch Linux, designed to provid
 ## Components
 
 ### Shell
-- **Zsh**: Enhanced shell with plugins and customizations
-- **Tmux**: Terminal multiplexer with custom keybindings and plugins
-- **Starship**: Cross-shell prompt with custom configuration
+- **Zsh**: Enhanced shell with Zinit for plugin management
+  - Syntax highlighting, autosuggestions, and completions
+  - Integration with Starship prompt
+  - Various Oh-My-Zsh plugins
+- **Tmux**: Terminal multiplexer with custom keybindings and Dracula theme
+  - Vim-like navigation
+  - Session persistence with tmux-resurrect and tmux-continuum
 
 ### Editor
 - **Neovim**: Modern Vim with LSP support, code completion, and more
   - Custom keybindings and plugins
   - Language-specific configurations
   - Git integration
+  - Code snippets and autocompletion
 
 ### Terminal
 - **Alacritty**: Fast, GPU-accelerated terminal emulator
-  - Custom colors and themes
-  - Font configuration
+  - Catppuccin-mocha theme
+  - Hack Nerd Font configuration
+  - Custom keybindings
 
 ### Desktop Environment
 - **XFCE4**: Lightweight and customizable desktop environment
   - Custom panel layouts
   - Keyboard shortcuts
-  - Theme and icon configuration
+  - Dracula theme and Gruvbox-Plus icon theme
 
 ### Development
 - **Git**: Version control configuration
@@ -80,13 +86,13 @@ The repository is structured as follows:
 dotfiles/
 ├── alacritty/               # Alacritty terminal configuration
 ├── archInstallGuide.md      # Arch Linux installation guide
-├── gtk3/                    # GTK3 theme configuration
-├── gtk4/                    # GTK4 theme configuration
-├── nix/                     # Nix package manager configuration
+├── gtk/                     # GTK theme configuration
+├── makefile_template        # Template for C/C++ projects
 ├── nvim/                    # Neovim configuration
 ├── README.md                # This file
 ├── setup.sh                 # Setup script
 ├── tmux/                    # Tmux configuration
+├── wifi-connect.sh          # WiFi connection utility
 ├── xfce4/                   # XFCE4 configuration
 └── zsh/                     # Zsh configuration
 ```
@@ -103,6 +109,26 @@ stow nvim     # Apply only Neovim configuration
 stow zsh      # Apply only Zsh configuration
 ```
 
+## Key Features
+
+### Terminal Environment
+- Zsh with Zinit plugin manager
+- Tmux for session management
+- Alacritty as the terminal emulator
+- Starship for a customizable prompt
+
+### Development Tools
+- Neovim as the primary editor with extensive plugins
+- LSP support for code completion and diagnostics
+- Git integration and aliases
+- Fuzzy finding with FZF
+- Directory navigation with zoxide
+
+### Desktop Environment
+- XFCE4 with custom panel configurations
+- Dracula theme with Gruvbox-Plus icons
+- Custom keyboard shortcuts
+
 ## Credits
 
 These dotfiles are inspired by and incorporate elements from various open-source projects and other dotfiles repositories. Special thanks to:
@@ -110,7 +136,7 @@ These dotfiles are inspired by and incorporate elements from various open-source
 - [Dracula Theme](https://draculatheme.com/)
 - [Gruvbox Theme](https://github.com/morhetz/gruvbox)
 - [The Primeagen](https://github.com/ThePrimeagen) for Neovim configurations
-- [Luke Smith](https://github.com/LukeSmithxyz) for Zsh and terminal configurations
+- [Catppuccin](https://github.com/catppuccin) for the terminal theme
 
 ## License
 

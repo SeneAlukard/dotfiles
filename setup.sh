@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Streamlined setup script for Arch Linux with Nix integration
-# This script sets up only essential tools with pacman and delegates the rest to Nix
+# Streamlined setup script for Arch Linux dotfiles
+# This script sets up essential tools and configurations
 # Dotfiles are managed with GNU Stow
 # Author: SeneAlukard (optimized version)
 
@@ -18,7 +18,6 @@ NC='\033[0m' # No Color
 DOTFILES_DIR="$HOME/dotfiles"
 REPO_URL="git@github.com:SeneAlukard/dotfiles.git"
 SIMULATE=${SIMULATE:-false} # Set to true to simulate the setup without making changes
-NIX_ENABLE=${NIX_ENABLE:-true} # Enable Nix setup by default
 
 # Function to print section headers
 print_section() {
@@ -104,7 +103,7 @@ check_arch_linux() {
 install_essential_tools() {
   print_section "Installing Essential Tools via pacman"
   
-  # Only include truly essential tools that shouldn't be managed by Nix
+  # Only include truly essential tools
   local essential_tools=(
     "git"         # Required for dotfiles and version control
     "stow"        # Required for dotfiles management
@@ -122,14 +121,11 @@ install_essential_tools() {
     "lightdm-gtk-greeter"
     "mesa"
     "mesa-demos"
-    "xfce4-superkey"
     "libx11"
     "libxtst"
     "neovim"
     "alacritty"
-    "zsh"
     "tmux"
-    "git"
     "fzf"
     "ripgrep"
     "bat"
@@ -151,7 +147,6 @@ install_essential_tools() {
   done
   
   print_success "Essential tools installation complete."
-  print_info "All other development tools will be managed by Nix."
 }
 
 # Function to clone or update dotfiles repository
@@ -198,7 +193,6 @@ stow_dotfiles() {
     local stow_dirs=(
       "alacritty"
       "nvim"
-      "ohmyposh"
       "tmux"
       "zsh"
       "gtk"
@@ -338,6 +332,49 @@ setup_xfce() {
   fi
 }
 
+# Function to set up zsh
+setup_zsh() {
+  print_section "Setting up Zsh"
+
+  # Install zsh if not already installed
+  install_if_missing "zsh"
+
+  # Set up Zinit
+  ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+  if [ ! -d "$ZINIT_HOME" ]; then
+    print_info "Installing Zinit..."
+    perform_action "mkdir -p $(dirname $ZINIT_HOME)"
+    perform_action "git clone https://github.com/zdharma-continuum/zinit.git $ZINIT_HOME"
+    print_success "Zinit installed."
+  else
+    print_info "Zinit already installed."
+  fi
+
+  # Install Starship prompt if not already installed
+  if ! command -v starship &>/dev/null; then
+    print_info "Installing Starship prompt..."
+    if [ "$SIMULATE" = false ]; then
+      perform_action "curl -sS https://starship.rs/install.sh | sh"
+    else
+      print_info "Would install Starship prompt."
+    fi
+  else
+    print_info "Starship prompt already installed."
+  fi
+
+  # Change default shell to zsh if not already
+  if [ "$(getent passwd $USER | cut -d: -f7)" != "$(which zsh)" ]; then
+    print_info "Changing default shell to Zsh..."
+    if [ "$SIMULATE" = false ]; then
+      perform_action "chsh -s $(which zsh)"
+    else
+      print_info "Would change default shell to Zsh."
+    fi
+  else
+    print_info "Zsh is already the default shell."
+  fi
+}
+
 # Final setup verification
 verify_setup() {
   print_section "Verifying Setup"
@@ -362,7 +399,6 @@ verify_setup() {
     print_success "Dotfiles appear to be properly stowed."
   fi
   
-  
   # Check font installation
   if [ ! -d "$HOME/.local/share/fonts/NerdFonts" ]; then
     print_warning "Nerd Fonts may not be properly installed."
@@ -375,7 +411,6 @@ verify_setup() {
     print_section "Setup Complete!"
     print_success "Your environment has been successfully configured."
     print_info "You may need to log out and log back in for all changes to take effect."
-    print_info "The remaining development tools and configurations will be managed by Nix."
   else
     print_section "Setup Completed with Warnings"
     print_warning "Some components may not have been installed correctly."
@@ -400,8 +435,10 @@ main() {
   # Step 2: Clone or update dotfiles repository
   setup_dotfiles_repo
   
+  # Step 3: Set up Zsh
+  setup_zsh
   
-  # Step 4: Now use GNU Stow to symlink dotfiles (after Nix is set up)
+  # Step 4: Now use GNU Stow to symlink dotfiles
   stow_dotfiles
   
   # Step 5: Set up fonts
@@ -421,15 +458,10 @@ while [[ $# -gt 0 ]]; do
       SIMULATE=true
       shift
       ;;
-    --no-nix)
-      NIX_ENABLE=false
-      shift
-      ;;
     --help)
       echo "Usage: $0 [OPTIONS]"
       echo "Options:"
       echo "  --simulate, --dry-run   Run in simulation mode without making changes"
-      echo "  --no-nix                Skip Nix package manager setup"
       echo "  --help                  Display this help message"
       exit 0
       ;;
