@@ -10,12 +10,15 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     lazypath,
   })
 end
-vim.opt.rtp:prepend(lazypath)
---Load Remap
 
-require('senealukard.remap')
+
+--Load Remap
+vim.opt.rtp:prepend(lazypath)
 
 --Load Lazy.nvim
+require('senealukard.remap')
+
+
 require('senealukard.lazy')
 
 --Load Settings

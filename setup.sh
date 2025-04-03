@@ -103,7 +103,7 @@ check_arch_linux() {
 install_essential_tools() {
   print_section "Installing Essential Tools via pacman"
   
-  # Only include truly essential tools
+  # Only include truly essential tools - removed desktop environment packages
   local essential_tools=(
     "git"         # Required for dotfiles and version control
     "stow"        # Required for dotfiles management
@@ -112,19 +112,9 @@ install_essential_tools() {
     "base-devel"  # Required for building packages
     "unzip"       # Required for extracting packages
     "wget"        # Required for downloading files
-    "xfce4"
-    "xfce4-goodies"
-    "xorg-server"
-    "xorg-apps"
-    "xorg-xinit"
-    "lightdm"
-    "lightdm-gtk-greeter"
-    "mesa"
-    "mesa-demos"
-    "libx11"
-    "libxtst"
     "neovim"
-    "alacritty"
+    #"alacritty"
+    "kitty"
     "tmux"
     "fzf"
     "ripgrep"
@@ -133,11 +123,7 @@ install_essential_tools() {
     "qbittorrent"
     "aria2"
     "ncdu"
-    "librewolf"
     "eza"
-    "adwaita-icon-theme"
-    "papirus-icon-theme"
-    "gruvbox-dark-gtk"
     "nodejs"
     "zoxide"
   )
@@ -181,7 +167,7 @@ stow_dotfiles() {
     BACKUP_DIR="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
     perform_action "mkdir -p $BACKUP_DIR"
     
-    for config in "$HOME/.zshrc" "$HOME/.tmux.conf" "$HOME/.config/nvim" "$HOME/.config/alacritty" "$HOME/"; do
+    for config in "$HOME/.zshrc" "$HOME/.tmux.conf" "$HOME/.config/nvim" "$HOME/.config/kitty"; do
       if [ -e "$config" ]; then
         perform_action "cp -r $config $BACKUP_DIR/"
       fi
@@ -189,14 +175,13 @@ stow_dotfiles() {
     
     print_success "Backup created at $BACKUP_DIR."
     
-    # Use stow to create symlinks
+    # Use stow to create symlinks - removed xfce4 and gtk
     local stow_dirs=(
-      "alacritty"
+      #"alacritty"
+      "kitty"
       "nvim"
       "tmux"
       "zsh"
-      "gtk"
-      "xfce4"
     )
     
     cd "$DOTFILES_DIR" || { print_error "Failed to change to dotfiles directory."; return 1; }
@@ -270,65 +255,6 @@ setup_fonts() {
     print_success "Nerd Fonts installed."
   else
     print_info "Nerd Fonts directory already exists."
-  fi
-}
-
-# Function to set up XFCE
-setup_xfce() {
-  print_section "Setting up XFCE"
-  
-  # Only proceed if we're running in XFCE
-  if ! pgrep xfce4-session &>/dev/null && ! [ -n "$XDG_CURRENT_DESKTOP" ] && [ "$XDG_CURRENT_DESKTOP" != "XFCE" ]; then
-    print_warning "XFCE session not detected. Skipping XFCE setup."
-    return 0
-  fi
-  
-  print_info "Setting up XFCE themes and configurations..."
-  
-  # Create necessary directories
-  perform_action "mkdir -p $HOME/.themes"
-  perform_action "mkdir -p $HOME/.icons"
-  
-  # Install Dracula theme if not present
-  if [ ! -d "$HOME/.themes/Dracula" ]; then
-    print_info "Installing Dracula GTK theme..."
-    perform_action "git clone https://github.com/dracula/gtk.git /tmp/dracula-gtk"
-    perform_action "cp -r /tmp/dracula-gtk/gtk-2.0 /tmp/dracula-gtk/gtk-3.0 /tmp/dracula-gtk/gtk-4.0 $HOME/.themes/Dracula/"
-    perform_action "rm -rf /tmp/dracula-gtk"
-    print_success "Dracula GTK theme installed."
-  fi
-  
-  # Install Gruvbox-Plus icons if not present
-  if [ ! -d "$HOME/.icons/Gruvbox-Plus-Dark" ]; then
-    print_info "Installing Gruvbox-Plus icon theme..."
-    perform_action "git clone https://github.com/SylEleuth/gruvbox-plus-icon-pack.git /tmp/gruvbox-plus"
-    perform_action "cp -r /tmp/gruvbox-plus/Gruvbox-Plus-Dark $HOME/.icons/"
-    perform_action "rm -rf /tmp/gruvbox-plus"
-    print_success "Gruvbox-Plus icon theme installed."
-  fi
-  
-  # Apply XFCE settings
-  if command -v xfconf-query &>/dev/null; then
-    print_info "Applying XFCE settings..."
-    
-    # Set GTK theme
-    perform_action "xfconf-query -c xsettings -p /Net/ThemeName -s 'Dracula'"
-    
-    # Set icon theme
-    perform_action "xfconf-query -c xsettings -p /Net/IconThemeName -s 'Gruvbox-Plus-Dark'"
-    
-    # Set window manager theme
-    perform_action "xfconf-query -c xfwm4 -p /general/theme -s 'Default'"
-    
-    # Set decorations layout
-    perform_action "xfconf-query -c xsettings -p /Gtk/DecorationLayout -s 'icon,menu:minimize,maximize,close'"
-    
-    # Set font
-    perform_action "xfconf-query -c xsettings -p /Gtk/FontName -s 'Sans 10'"
-    
-    print_success "XFCE settings applied."
-  else
-    print_warning "xfconf-query not found. Skipping XFCE settings application."
   fi
 }
 
@@ -410,11 +336,13 @@ verify_setup() {
   if [ "$all_good" = true ]; then
     print_section "Setup Complete!"
     print_success "Your environment has been successfully configured."
+    print_info "Use your arch-setup.sh script to install desktop environment/window manager components."
     print_info "You may need to log out and log back in for all changes to take effect."
   else
     print_section "Setup Completed with Warnings"
     print_warning "Some components may not have been installed correctly."
     print_info "Check the messages above for details and try resolving the issues manually."
+    print_info "After fixing issues, use your arch-setup.sh script to install the desktop environment."
   fi
 }
 
@@ -443,9 +371,6 @@ main() {
   
   # Step 5: Set up fonts
   setup_fonts
-  
-  # Step 6: Set up XFCE
-  setup_xfce
   
   # Final verification
   verify_setup

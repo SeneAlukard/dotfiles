@@ -1,4 +1,4 @@
-export TERM="xterm-256color"
+export TERM="xterm-kitty"  # Add this to your shell rc (e.g., ~/.bashrc, ~/.zshrc)
 export MANPAGER="nvim +Man!"
 if [ -n "${NVIM_LISTEN_ADDRESS+x}" ]; then
   export MANPAGER="/usr/local/bin/nvr -c 'Man!' -o -"
@@ -118,6 +118,7 @@ export EDITOR=nvim
 # -----------------------------------------------------
 # ALIASES
 # -----------------------------------------------------
+alias catngrok="cat ~/connection.log | grep -o \"[0-9]\+\.tcp\.[a-z.]\+:[0-9]\+\""
 alias c='clear'
 alias nf='fastfetch'
 alias pf='fastfetch'
