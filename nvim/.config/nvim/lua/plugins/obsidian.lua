@@ -1,21 +1,10 @@
 return {
   "epwalsh/obsidian.nvim",
-  version = "*",  -- recommended, use latest release instead of latest commit
+  version = "*",
   lazy = true,
   ft = "markdown",
-  -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-  -- event = {
-  --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-  --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
-  --   -- refer to `:h file-pattern` for more examples
-  --   "BufReadPre path/to/my-vault/*.md",
-  --   "BufNewFile path/to/my-vault/*.md",
-  -- },
   dependencies = {
-    -- Required.
     "nvim-lua/plenary.nvim",
-
-    -- see below for full list of optional dependencies 👇
   },
   opts = {
     workspaces = {
@@ -29,6 +18,40 @@ return {
       },
     },
 
-    -- see below for full list of options 👇
+    -- UI minimization settings
+    disable_frontmatter = true, -- Don't show frontmatter in preview
+    completion = {
+      nvim_cmp = true,          -- Use regular nvim-cmp instead of Obsidian's UI
+      min_chars = 2,            -- Reduce popup frequency
+    },
+
+    -- Disable most UI elements
+    ui = {
+      enable = false, -- Disable all built-in UI
+      checkboxes = {
+        enabled = false,
+      },
+    },
+
+    -- Optional: Disable specific features
+    daily_notes = {
+      enabled = false,
+    },
+    templates = {
+      enabled = false,
+    },
+
+    -- Performance optimizations
+    follow_url_func = function(url)
+      -- Use default handler instead of Obsidian's UI
+      vim.fn.jobstart({ "xdg-open", url }) -- or "open" on macOS
+    end,
   },
+  config = function(_, opts)
+    require("obsidian").setup(opts)
+
+    -- Additional keymaps to manually trigger features when needed
+    vim.keymap.set("n", "<leader>oc", "<cmd>ObsidianCheck<CR>", { desc = "Obsidian: Check links" })
+    vim.keymap.set("n", "<leader>ot", "<cmd>ObsidianToday<CR>", { desc = "Obsidian: Today's note" })
+  end
 }
