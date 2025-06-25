@@ -1,4 +1,9 @@
-export TERM="xterm-kitty"  # Add this to your shell rc (e.g., ~/.bashrc, ~/.zshrc)
+# detect Kitty vs. “normal” terminal and set TERM accordingly
+if [[ -n "$KITTY_WINDOW_ID" ]] || [[ "$TERM_PROGRAM" == "kitty" ]]; then
+  export TERM="xterm-kitty"
+else
+  export TERM="xterm-256color"
+fi
 export MANPAGER="nvim +Man!"
 if [ -n "${NVIM_LISTEN_ADDRESS+x}" ]; then
   export MANPAGER="/usr/local/bin/nvr -c 'Man!' -o -"
